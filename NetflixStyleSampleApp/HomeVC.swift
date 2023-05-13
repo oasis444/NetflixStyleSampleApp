@@ -11,18 +11,22 @@ import SwiftUI
 class HomeVC: UICollectionViewController {
     
     var contents: [Content] = []
+    var mainItem: Item?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.window?.overrideUserInterfaceStyle = .dark // 다크모드 고정
         configureNavigationBar()
         self.contents = getContents()
-        configureCollectionCell()
+        self.mainItem = contents.first?.contentItem.randomElement()
+        configureCollectionViewCell()
     }
     
-    private func configureCollectionCell() {
+    private func configureCollectionViewCell() {
         collectionView.register(ContentCell.self, forCellWithReuseIdentifier: "ContentCell")
         collectionView.register(ContentRankCell.self, forCellWithReuseIdentifier: "ContentRankCell")
+        collectionView.register(ContentMainCell.self, forCellWithReuseIdentifier: "ContentMainCell")
         
         // Header 설정
         collectionView.register(ContentHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "ContentHeader")
@@ -62,7 +66,8 @@ class HomeVC: UICollectionViewController {
             case .rank:
                 return self.createRankTypeSection()
                 
-            default: return nil
+            case .main:
+                return self.createMainTypeSection()
             }
         }
     }
@@ -124,6 +129,19 @@ class HomeVC: UICollectionViewController {
         return section
     }
     
+    private func createMainTypeSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(450))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 0, leading: 0, bottom: 20, trailing: 0)
+
+        return section
+    }
+    
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         let layoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(30))
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: layoutSectionHeaderSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
@@ -133,16 +151,14 @@ class HomeVC: UICollectionViewController {
 
 extension HomeVC {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if contents[section].sectionType == .basic || contents[section].sectionType == .large || contents[section].sectionType == .rank {
-            switch section {
-            case 0:
-                return 1
-            default:
-                return contents[section].contentItem.count
-            }
-        } else {
-            return 0
+        switch section {
+        case 0:
+            return 1
+            
+        default:
+            return contents[section].contentItem.count
         }
+        
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -158,8 +174,11 @@ extension HomeVC {
             cell.rankLabel.text = "\(indexPath.item + 1)"
             return cell
             
-        default:
-            return UICollectionViewCell()
+        case .main:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ContentMainCell", for: indexPath) as? ContentMainCell else { return UICollectionViewCell() }
+            cell.imageView.image = mainItem?.image
+            cell.descriptionLabel.text = mainItem?.description
+            return cell
         }
     }
 
