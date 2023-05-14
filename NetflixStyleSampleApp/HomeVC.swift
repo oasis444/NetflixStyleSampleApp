@@ -87,7 +87,6 @@ class HomeVC: UICollectionViewController {
         // 헤더 설정
         let sectionHeader = createSectionHeader()
         section.boundarySupplementaryItems = [sectionHeader]
-
         return section
     }
     
@@ -106,7 +105,6 @@ class HomeVC: UICollectionViewController {
         // 헤더 설정
         let sectionHeader = createSectionHeader()
         section.boundarySupplementaryItems = [sectionHeader]
-
         return section
     }
     
@@ -125,7 +123,6 @@ class HomeVC: UICollectionViewController {
         // 헤더 설정
         let sectionHeader = createSectionHeader()
         section.boundarySupplementaryItems = [sectionHeader]
-
         return section
     }
     
@@ -158,7 +155,6 @@ extension HomeVC {
         default:
             return contents[section].contentItem.count
         }
-        
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

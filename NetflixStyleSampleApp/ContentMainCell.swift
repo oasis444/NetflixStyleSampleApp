@@ -90,7 +90,6 @@ class ContentMainCell: UICollectionViewCell {
             $0.width.equalTo(90)
             $0.height.equalTo(30)
         }
-        playButton.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
         
         //menuStackView
         menuStackView.axis = .horizontal
