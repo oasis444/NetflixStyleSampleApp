@@ -2,4 +2,4 @@
 
 Use: SnapKit, UICollectionViewCompositionalLayout
 
-feature: without storyboard, SwiftUI PreviewProvider
+feature: without storyboard, SwiftUI
