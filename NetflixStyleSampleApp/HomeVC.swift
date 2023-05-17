@@ -16,7 +16,7 @@ class HomeVC: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.window?.overrideUserInterfaceStyle = .dark // 다크모드 고정
+        view.backgroundColor = .black
         configureNavigationBar()
         self.contents = getContents()
         self.mainItem = contents.first?.contentItem.randomElement()
@@ -183,8 +183,12 @@ extension HomeVC {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let sectionName = contents[indexPath.section].sectionName
-        print("Test: \(sectionName)섹션, \(indexPath.item)번 콘텐츠")
+        let isFistSection = indexPath.section == 0
+        let selectedItem = isFistSection ? mainItem : contents[indexPath.section].contentItem[indexPath.row]
+        
+        let contentDetailView = ContentDetailView(item: selectedItem)
+        let hostingVC = UIHostingController(rootView: contentDetailView)
+        navigationController?.pushViewController(hostingVC, animated: true)
     }
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -201,16 +205,16 @@ extension HomeVC {
 // SwiftUI를 활용한 미리보기
 struct HomeViewController_Previews: PreviewProvider {
     static var previews: some View {
-        Container().edgesIgnoringSafeArea(.all)
+        HomeVCReprsentable().edgesIgnoringSafeArea(.all)
     }
+}
 
-    struct Container: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            let layout = UICollectionViewFlowLayout()
-            let homeViewController = HomeVC(collectionViewLayout: layout)
-            return UINavigationController(rootViewController: homeViewController)
-        }
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) { }
-        typealias UIViewControllerType = UIViewController
+struct HomeVCReprsentable: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        let layout = UICollectionViewFlowLayout()
+        let homeViewController = HomeVC(collectionViewLayout: layout)
+        return UINavigationController(rootViewController: homeViewController)
     }
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) { }
+    typealias UIViewControllerType = UIViewController
 }
